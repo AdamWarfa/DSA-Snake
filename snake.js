@@ -67,6 +67,14 @@ function tick() {
       break;
   }
 
+  for (let i = 0; i < queue.size(); i++) {
+    const part = queue.get(i);
+    if (part.row === head.row && part.col === head.col) {
+      console.log("Game Over!");
+      return;
+    }
+  }
+
   queue.enqueue(head);
   queue.dequeue();
 
@@ -74,6 +82,16 @@ function tick() {
     const part = queue.get(i);
 
     grid.set({ row: part.row, col: part.col, value: 1 });
+  }
+
+  if (queue.tail.data.row === goal.row && queue.tail.data.col === goal.col) {
+    console.log("Goal reached");
+
+    queue.enqueue({ row: goal.row, col: goal.col });
+
+    setTimeout(() => {
+      generateGoal();
+    }, 2000);
   }
 
   // display the model in full
@@ -114,11 +132,14 @@ let direction = "right";
 // #region model
 const grid = new Grid(30, 30);
 
+let goal = { row: 0, col: 0 };
+
 function generateGoal() {
   const row = Math.floor(Math.random() * grid.getRows());
   const col = Math.floor(Math.random() * grid.getCols());
 
-  grid.set({ row, col, value: 2 });
+  goal = { row, col, value: 2 };
+  grid.set(goal);
 }
 
 generateGoal();
